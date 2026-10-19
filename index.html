@@ -172,7 +172,7 @@ function buildEnvironment() {
         float h = vDir.y;
         vec3 top = vec3(0.01, 0.01, 0.012);
         vec3 mid = vec3(0.06, 0.062, 0.07);
-        vec3 bot = vec3(0.22, 0.25, 0.38);
+        vec3 bot = vec3(0.14, 0.14, 0.15);
         vec3 c = h > 0. ? mix(mid, top, smoothstep(0., .5, h)) : mix(mid, bot, smoothstep(0.05, .55, -h));
         gl_FragColor = vec4(c, 1.);
       }`,
