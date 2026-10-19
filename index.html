@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>404 · tools.yeroshen.com</title>
+<meta name="description" content="Такой страницы нет">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#050608">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230b0b0c'/%3E%3Ccircle cx='17' cy='34' r='8' fill='none' stroke='%231f5eff' stroke-width='4'/%3E%3Crect x='26' y='43' width='11' height='3.5' fill='%231f5eff'/%3E%3Cellipse cx='45' cy='29' rx='10' ry='12' fill='none' stroke='%231f5eff' stroke-width='4.5'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050608;
+    --blue: #1f5eff;
+    --fg: #ffffff;
+    --muted: rgba(255, 255, 255, 0.6);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background:
+      radial-gradient(120% 75% at 50% 115%, #2a63ff 0%, #1646d6 28%, #0b2167 52%, #060914 76%, var(--bg) 100%),
+      var(--bg);
+    color: var(--fg);
+    font-family: "Onest", system-ui, sans-serif;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  #scene {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+    touch-action: none;
+  }
+  #scene:active { cursor: grabbing; }
+  .mark {
+    position: fixed;
+    width: 22px;
+    height: 22px;
+    color: var(--blue);
+    pointer-events: none;
+  }
+  .mark.tl { top: 24px; left: 24px; }
+  .mark.tr { top: 24px; right: 24px; }
+  .mark.bl { bottom: 24px; left: 24px; }
+  .mark.br { bottom: 24px; right: 24px; }
+  .fallback {
+    position: fixed;
+    inset: 0;
+    display: none;
+    place-items: center;
+    font-size: clamp(96px, 26vw, 300px);
+    font-weight: 500;
+    color: var(--blue);
+  }
+  .no-webgl .fallback { display: grid; }
+  .code {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: max(9vh, 64px);
+    padding: 0 16px;
+    text-align: center;
+    font-size: clamp(56px, 9vw, 120px);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    pointer-events: none;
+  }
+  .caption {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: max(56px, env(safe-area-inset-bottom));
+    padding: 0 16px;
+    text-align: center;
+    pointer-events: none;
+  }
+  .caption p {
+    font-size: clamp(20px, 2.6vw, 34px);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .caption a {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: clamp(15px, 1.4vw, 18px);
+    color: var(--muted);
+    text-decoration: none;
+    pointer-events: auto;
+    transition: color 0.2s;
+  }
+  .caption a:hover, .caption a:focus-visible { color: var(--fg); }
+</style>
+</head>
+<body>
+<canvas id="scene" aria-label="Трёхмерный смайлик o_O"></canvas>
+<div class="fallback" aria-hidden="true">o_O</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="reg" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.2">
+    <circle cx="11" cy="11" r="5"/>
+    <path d="M1 1 21 21M21 1 1 21"/>
+  </symbol>
+</svg>
+<svg class="mark tl" aria-hidden="true"><use href="#reg"/></svg>
+<svg class="mark tr" aria-hidden="true"><use href="#reg"/></svg>
+<svg class="mark bl" aria-hidden="true"><use href="#reg"/></svg>
+<svg class="mark br" aria-hidden="true"><use href="#reg"/></svg>
+
+<h1 class="code">404</h1>
+<div class="caption">
+  <p>Такой страницы нет</p>
+  <a href="https://vlad.yeroshen.com/">Портфолио&nbsp;— vlad.yeroshen.com&nbsp;→</a>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { mergeVertices } from "three/addons/utils/BufferGeometryUtils.js";
+
+const canvas = document.getElementById("scene");
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+} catch (e) {
+  document.documentElement.classList.add("no-webgl");
+  throw e;
+}
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setClearColor(0x000000, 0);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+
+// Studio environment: near-black room, a hard blue floor glow and a set of
+// thin white strips — chrome reads as foil only with high-contrast reflections
+function buildEnvironment() {
+  const env = new THREE.Scene();
+  const dome = new THREE.Mesh(
+    new THREE.SphereGeometry(20, 64, 32),
+    new THREE.ShaderMaterial({
+      side: THREE.BackSide,
+      vertexShader: `varying vec3 vDir; void main(){ vDir = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.); }`,
+      fragmentShader: `varying vec3 vDir; void main(){
+        float h = vDir.y;
+        vec3 top = vec3(0.015, 0.015, 0.02);
+        vec3 mid = vec3(0.13, 0.135, 0.15);
+        vec3 bot = vec3(0.10, 0.24, 1.0);
+        vec3 c = h > 0. ? mix(mid, top, smoothstep(0., .5, h)) : mix(mid, bot, smoothstep(0.05, .55, -h));
+        gl_FragColor = vec4(c, 1.);
+      }`,
+    })
+  );
+  env.add(dome);
+  const strip = (w, h, x, y, z, intensity) => {
+    const m = new THREE.Mesh(
+      new THREE.PlaneGeometry(w, h),
+      new THREE.MeshBasicMaterial({ color: new THREE.Color(1, 1, 1).multiplyScalar(intensity), side: THREE.DoubleSide })
+    );
+    m.position.set(x, y, z);
+    m.lookAt(0, 0, 0);
+    env.add(m);
+  };
+  strip(14, 6, 0, 9, 9, 2.2);     // broad soft key, above-front
+  strip(12, 2.2, -4, 9, 5, 5);    // key, top-left
+  strip(1.2, 10, 9, 1, 5, 4);     // tall rim, right
+  strip(0.6, 10, -9, 0, 6, 2.5);  // thin left strip
+  strip(8, 0.5, 0, 4, 11, 3);     // front top line
+  strip(3, 3, 6, 6, -8, 2);       // back-right
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  return pmrem.fromScene(env, 0).texture;
+}
+scene.environment = buildEnvironment();
+
+const chrome = new THREE.MeshPhysicalMaterial({
+  color: 0xf2f3f6,
+  metalness: 1,
+  roughness: 0.07,
+  envMapIntensity: 1.15,
+});
+
+// Foil balloons are two flat sheets welded along the outline: puffy faces,
+// a thin crimped lip at the seam, and pleats where the film bunches up near it
+function foilShape(sv, cv, pleatPhase, seed) {
+  const seamDist = Math.abs(sv);
+  const near = Math.exp(-Math.pow(seamDist / 0.32, 2));
+  const pleat = near * (
+    0.6 * Math.sin(pleatPhase + 1.7 * Math.sin(pleatPhase * 0.11 + seed)) +
+    0.4 * Math.sin(pleatPhase * 1.93 + seed * 2.3)
+  );
+  const lip = Math.exp(-Math.pow(seamDist / 0.06, 2)) * (1 + 0.12 * Math.sin(pleatPhase * 5));
+  const lump = 1 + 0.03 * Math.sin(pleatPhase * 0.17 + seed) * Math.cos(sv * 1.6);
+  return { near, pleat, lip, lump };
+}
+
+function finish(geo) {
+  geo.deleteAttribute("uv");
+  geo.deleteAttribute("normal");
+  const merged = mergeVertices(geo, 1e-5);
+  merged.computeVertexNormals();
+  return merged;
+}
+
+// Ring balloon ("o" / "O"): elliptical centreline, flattened cross-section
+function balloonRing({ rx, ry, a, b, pleats, seed }) {
+  const geo = new THREE.TorusGeometry(1, 0.3, 160, 520);
+  const pos = geo.attributes.position, uv = geo.attributes.uv;
+  for (let i = 0; i < pos.count; i++) {
+    const u = uv.getX(i) * Math.PI * 2;
+    const v = uv.getY(i) * Math.PI * 2;
+    const cu = Math.cos(u), su = Math.sin(u);
+    const cv = Math.cos(v), sv = Math.sin(v);
+    let nx = ry * cu, ny = rx * su;
+    const nl = Math.hypot(nx, ny); nx /= nl; ny /= nl;
+    const f = foilShape(sv, cv, u * pleats, seed);
+    const sgn = cv >= 0 ? 1 : -1;
+    let x = a * sgn * Math.pow(Math.abs(cv), 0.92);
+    x += sgn * a * (-0.07 * f.near + 0.06 * f.pleat + 0.035 * f.lip);
+    let z = b * Math.sign(sv) * Math.pow(Math.abs(sv), 0.85) + sv * b * 0.22 * f.pleat;
+    x *= f.lump; z *= f.lump;
+    pos.setXYZ(i, rx * cu + nx * x, ry * su + ny * x, z);
+  }
+  return finish(geo);
+}
+
+// Bar balloon ("_"): a pillow inflated from a stadium outline
+function balloonBar({ halfLen, w, b, pleats, seed }) {
+  const nu = 300, nv = 120;
+  const perim = 4 * halfLen + 2 * Math.PI * w;
+  const outline = (t) => {
+    let d = t * perim;
+    if (d < 2 * halfLen) return [halfLen - d, w, 0, 1];
+    d -= 2 * halfLen;
+    if (d < Math.PI * w) { const ang = Math.PI / 2 + d / w; return [-halfLen + Math.cos(ang) * w, Math.sin(ang) * w, Math.cos(ang), Math.sin(ang)]; }
+    d -= Math.PI * w;
+    if (d < 2 * halfLen) return [-halfLen + d, -w, 0, -1];
+    d -= 2 * halfLen;
+    const ang = -Math.PI / 2 + d / w;
+    return [halfLen + Math.cos(ang) * w, Math.sin(ang) * w, Math.cos(ang), Math.sin(ang)];
+  };
+  const verts = [], idx = [];
+  for (let j = 0; j < nu; j++) {
+    const t = j / nu;
+    const [ox, oy, dx, dy] = outline(t);
+    const ax = Math.max(-halfLen, Math.min(halfLen, ox));
+    for (let k = 0; k <= nv; k++) {
+      const v = -Math.PI / 2 + (k / nv) * Math.PI;
+      const cv = Math.cos(v), sv = Math.sin(v);
+      const f = foilShape(sv, cv, t * perim * pleats, seed);
+      let r = w * Math.pow(cv, 0.92);
+      r += w * (-0.06 * f.near + 0.035 * f.pleat + 0.035 * f.lip);
+      const z = (b * Math.sign(sv) * Math.pow(Math.abs(sv), 0.85) + sv * b * 0.12 * f.pleat) * f.lump;
+      verts.push(ax + dx * r * f.lump, dy * r * f.lump, z);
+    }
+  }
+  for (let j = 0; j < nu; j++) {
+    const j2 = (j + 1) % nu;
+    for (let k = 0; k < nv; k++) {
+      const a0 = j * (nv + 1) + k, a1 = j2 * (nv + 1) + k;
+      idx.push(a0, a1, a0 + 1, a1, a1 + 1, a0 + 1);
+    }
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
+  geo.setIndex(idx);
+  const merged = mergeVertices(geo, 1e-5);
+  merged.computeVertexNormals();
+  return merged;
+}
+
+const face = new THREE.Group();
+scene.add(face);
+
+const small = new THREE.Mesh(balloonRing({ rx: 0.52, ry: 0.52, a: 0.21, b: 0.17, pleats: 16, seed: 0.4 }), chrome);
+const big = new THREE.Mesh(balloonRing({ rx: 0.86, ry: 1.0, a: 0.29, b: 0.22, pleats: 22, seed: 2.1 }), chrome);
+const bar = new THREE.Mesh(balloonBar({ halfLen: 0.36, w: 0.13, b: 0.11, pleats: 14, seed: 1.2 }), chrome);
+
+function pivotAt(mesh, x, y, phase) {
+  const p = new THREE.Group();
+  p.position.set(x, y, 0);
+  p.add(mesh);
+  p.userData = { baseY: y, phase };
+  face.add(p);
+  return p;
+}
+const smallPivot = pivotAt(small, -1.75, -0.12, 0);
+const barPivot = pivotAt(bar, -0.42, -0.95, 1.3);
+const bigPivot = pivotAt(big, 1.2, 0.28, 2.6);
+
+function resize() {
+  const w = window.innerWidth, h = window.innerHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  // Keep the whole face (≈ 5 units wide) in view on narrow screens
+  const fitWidth = 5.8 / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect);
+  camera.position.set(0, 0.15, Math.max(10.5, fitWidth));
+  camera.lookAt(0, 0.1, 0);
+  camera.updateProjectionMatrix();
+}
+window.addEventListener("resize", resize);
+resize();
+
+// Pointer: face looks at the cursor; drag spins it; click makes the big eye pop
+const target = new THREE.Vector2();
+let dragging = false, lastX = 0, spin = 0, spinVel = 0;
+canvas.addEventListener("pointermove", (e) => {
+  target.x = (e.clientX / window.innerWidth) * 2 - 1;
+  target.y = (e.clientY / window.innerHeight) * 2 - 1;
+  if (dragging) {
+    spinVel = (e.clientX - lastX) * 0.01;
+    spin += spinVel;
+    lastX = e.clientX;
+  }
+});
+canvas.addEventListener("pointerdown", (e) => {
+  dragging = true;
+  lastX = e.clientX;
+  canvas.setPointerCapture(e.pointerId);
+  surprise = 1;
+});
+canvas.addEventListener("pointerup", () => { dragging = false; });
+
+let nextBlink = 1.5, blink = 0, surprise = 0;
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const amp = reduceMotion ? 0 : 1;
+
+const clock = new THREE.Clock();
+function tick() {
+  const dt = Math.min(clock.getDelta(), 0.05);
+  const t = clock.elapsedTime;
+
+  if (!dragging) {
+    spinVel *= 0.94;
+    spin += spinVel;
+    spin *= 0.97;
+  }
+  face.rotation.y += (target.x * 0.45 + spin - face.rotation.y) * 0.08;
+  face.rotation.x += (target.y * 0.25 - face.rotation.x) * 0.08;
+
+  nextBlink -= dt;
+  if (nextBlink <= 0) { blink = 1; nextBlink = 2.5 + Math.random() * 3; }
+  blink = Math.max(0, blink - dt * 6);
+  const lid = 1 - Math.sin(blink * Math.PI) * 0.85;
+
+  surprise = Math.max(0, surprise - dt * 1.8);
+  const pop = 1 + Math.sin(surprise * Math.PI) * 0.16;
+
+  for (const p of face.children) {
+    p.position.y = p.userData.baseY + Math.sin(t * 1.3 + p.userData.phase) * 0.05 * amp;
+  }
+  smallPivot.scale.set(1, lid, 1);
+  bigPivot.scale.set(pop, lid * pop, pop);
+  smallPivot.rotation.z = Math.sin(t * 0.9) * 0.06 * amp;
+  bigPivot.rotation.z = Math.sin(t * 0.7 + 1) * 0.05 * amp;
+  barPivot.rotation.z = Math.sin(t * 1.1 + 2) * 0.05 * amp;
+  // Balloons sway a touch around their own vertical axis
+  smallPivot.rotation.y = Math.sin(t * 0.6) * 0.15 * amp;
+  bigPivot.rotation.y = Math.sin(t * 0.5 + 2) * 0.12 * amp;
+
+  renderer.render(scene, camera);
+  requestAnimationFrame(tick);
+}
+tick();
+</script>
+</body>
+</html>
